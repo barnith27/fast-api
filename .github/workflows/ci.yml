@@ -1,0 +1,25 @@
+name: CI
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Run Black (форматирование кода)
+      run: black . --check
+    - name: Run Flake8 (проверка стиля)
+      run: flake8 . --count --max-complexity=10 --max-line-length=88 --statistics
+    - name: Run tests with pytest
+      run: pytest tests/ -v
